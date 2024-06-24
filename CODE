@@ -1,0 +1,222 @@
+//CODE
+#include <stdio.h>    // Include standard input-output library
+#include <stdlib.h>   // Include standard library for memory allocation
+#include <string.h>  // Include string manipulation library
+
+/ /Defines maximum limits for various fields in the address book
+#define MAX_CONTACTS 100
+#define NAME_LENGTH 50
+#define PHONE_LENGTH 20
+#define EMAIL_LENGTH 100
+
+//21BEC0687
+// Define a structure for contact information
+struct Contact {
+    char name[NAME_LENGTH]; // Holds the name of the contact
+    union {
+        char phone[PHONE_LENGTH]; // Union to hold phone number
+        char email[EMAIL_LENGTH]; // Union to hold email address
+    } contactInfo;
+    int isPhone; // Flag to indicate whether phone number is present (1) or email (0)
+};
+// Function prototypes
+void addContact(struct Contact *addressBook, int *numContacts);
+void deleteContact(struct Contact *addressBook, int *numContacts);
+void updateContact(struct Contact *addressBook, int numContacts);
+void viewContacts(struct Contact *addressBook, int numContacts);
+void searchContact(struct Contact *addressBook, int numContacts);
+
+int main() {
+    struct Contact addressBook[MAX_CONTACTS];  // Array to store contacts
+    int numContacts = 0;          // Variable to track the number of contacts
+    int choice;                          //Variable to store user's menu choice
+
+    // Main menu loop
+    do {
+        printf("\n*** Address Book Menu ***\n");
+        printf("1. Add Contact\n");
+        printf("2. Delete Contact\n");
+        printf("3. Update Contact\n");
+        printf("4. View Contacts\n");
+        printf("5. Search Contact\n");
+        printf("6. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        // Switch case for menu options
+        switch (choice) {
+            case 1:
+                addContact(addressBook, &numContacts); // Add a new contact
+                break;
+            case 2:
+                deleteContact(addressBook, &numContacts); // Delete a contact
+                break;
+            case 3:
+                updateContact(addressBook, numContacts); // Update a contact
+                break;
+            case 4:
+                viewContacts(addressBook, numContacts); // View all contacts
+                break;
+            case 5:
+                searchContact(addressBook, numContacts); // Search for a contact
+                break;
+            case 6:
+                printf("Exiting...\n"); // Exit the program
+                break;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    } while (choice != 6);
+
+    return 0;
+}
+
+// Function to add a new contact
+void addContact(struct Contact *addressBook, int *numContacts) {
+    // Check if the address book has space to add more contacts
+    if (*numContacts < MAX_CONTACTS) {
+        struct Contact newContact;  // Create a new contact struct
+        
+        // Prompt the user to enter the name of the contact
+        printf("Enter name: ");
+        scanf(" %[^\n]s", newContact.name);
+        
+    // Prompt the user to specify whether the contact has a phone number or an email
+        printf("Enter 1 for phone number or 0 for email: ");
+        scanf("%d", &newContact.isPhone);
+        
+ // Depending on the user's choice, prompt for and store the phone number or email
+        if (newContact.isPhone) {
+            printf("Enter phone number: ");
+            scanf(" %[^\n]s", newContact.contactInfo.phone);
+        } else {
+            printf("Enter email id: ");
+            scanf(" %[^\n]s", newContact.contactInfo.email);
+        }
+        
+    // Add the new contact to the address book and increment the number of contacts
+        addressBook[*numContacts] = newContact;
+        (*numContacts)++;
+        printf("Contact added successfully.\n");
+    } else {
+        // Notify the user if the address book is full
+        printf("Address book is full. Cannot add more contacts.\n");
+    }
+}
+// Function to delete a contact
+void deleteContact(struct Contact *addressBook, int *numContacts) {
+    char searchName[NAME_LENGTH];  // Buffer to store the name of the contact to be deleted
+    
+    // Prompt the user to enter the name of the contact to be deleted
+    printf("Enter name to delete: ");
+    scanf(" %[^\n]s", searchName);
+
+    int found = 0;  // Flag to indicate if the contact was found
+    for (int i = 0; i < *numContacts; i++) {
+        if (strcmp(addressBook[i].name, searchName) == 0) {  // If the contact's name matches the search name
+            // Shift elements to remove the contact by overwriting it with the next contact in the array
+            for (int j = i; j < *numContacts - 1; j++) {
+                addressBook[j] = addressBook[j + 1];
+            }
+            (*numContacts)--;  // Decrement the number of contacts
+            printf("Contact deleted successfully.\n");
+            found = 1;  // Set the flag to indicate that the contact was found and deleted
+            break;
+        }
+    }
+
+    if (!found) {
+        // If the contact was not found, notify the user
+        printf("Contact not found.\n");
+    }
+}
+
+// Function to update a contact
+void updateContact(struct Contact *addressBook, int numContacts) {
+    char searchName[NAME_LENGTH];  // Buffer to store the name of the contact to be updated
+    
+    // Prompt the user to enter the name of the contact to be updated
+    printf("Enter name to update: ");
+    scanf(" %[^\n]s", searchName);
+
+    int found = 0;  // Flag to indicate if the contact was found
+    for (int i = 0; i < numContacts; i++) {
+        if (strcmp(addressBook[i].name, searchName) == 0) {  // If the contact's name matches the search name
+            // Prompt the user to enter whether to update phone number or email
+            printf("Enter new 1 for phone number or 0 for email: ");
+            scanf("%d", &addressBook[i].isPhone);
+            
+            // Depending on the user's choice, prompt for the corresponding field
+            if (addressBook[i].isPhone) {
+                printf("Enter new phone number: ");
+                scanf(" %[^\n]s", addressBook[i].contactInfo.phone);
+            } else {
+                printf("Enter new email id: ");
+                scanf(" %[^\n]s", addressBook[i].contactInfo.email);
+            }
+            printf("Contact updated successfully.\n");
+            found = 1;  // Set the flag to indicate that the contact was found and updated
+            break;
+        }
+    }
+
+    if (!found) {
+        // If the contact was not found, notify the user
+        printf("Contact not found.\n");
+    }
+}
+// Function to view all contacts
+void viewContacts(struct Contact *addressBook, int numContacts) {
+    if (numContacts == 0) {
+        // If there are no contacts in the address book, display a message indicating so
+        printf("No contacts in the address book.\n");
+    } else {
+        // If there are contacts in the address book, display the list of contacts
+        printf("List of Contacts:\n");
+        for (int i = 0; i < numContacts; i++) {
+            if (addressBook[i].isPhone) {
+                // If the contact has a phone number, display the name and phone number
+                printf("%d. Name: %s, Phone: %s\n", i + 1, addressBook[i].name, addressBook[i].contactInfo.phone);
+            } else {
+                // If the contact has an email, display the name and email
+                printf("%d. Name: %s, Email: %s\n", i + 1, addressBook[i].name, addressBook[i].contactInfo.email);
+            }
+        }
+    }
+}
+// Function to search for a contact
+void searchContact(struct Contact *addressBook, int numContacts) {
+    // Declare a character array to store the name being searched for
+    char searchName[NAME_LENGTH];
+    // Prompt the user to enter the name to search
+    printf("Enter name to search: ");
+    // Read the name input from the user
+    scanf(" %[^\n]s", searchName);
+
+    // Initialize a flag to track if the contact is found
+    int found = 0;
+    // Iterate through the address book to search for the contact
+    for (int i = 0; i < numContacts; i++) {
+        // Compare the name of the current contact with the search name
+        if (strcmp(addressBook[i].name, searchName) == 0) {
+            // If the names match, display the contact information
+            printf("Contact found:\n");
+            if (addressBook[i].isPhone) {
+                // If the contact has a phone number, display the name and phone number
+                printf("Name: %s, Phone: %s\n", addressBook[i].name, addressBook[i].contactInfo.phone);
+            } else {
+                // If the contact has an email, display the name and email
+                printf("Name: %s, Email: %s\n", addressBook[i].name, addressBook[i].contactInfo.email);
+            }
+            // Set the flag to indicate that the contact is found
+            found = 1;
+            // Exit the loop since the contact is found
+            break;
+        }
+    }
+
+    // If the contact is not found, display a message
+    if (!found) {
+        printf("Contact not found.\n");
+    }
+}
