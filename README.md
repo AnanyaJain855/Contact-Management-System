@@ -1,17 +1,22 @@
-# Contact-Management-System
+# 📋 Contact Management System
 
-##Description
-This is a simple Address Book application written in C. It allows users to manage their contacts by adding, deleting, updating, viewing, and searching for contacts. Each contact can have either a phone number or an email address associated with it.
+## 📘 Overview
 
-##Features
-**Add Contact:** Add a new contact to the address book.
-**Delete Contact:** Remove an existing contact from the address book.
-**Update Contact:** Update the information of an existing contact.
-**View Contacts:** View all contacts in the address book.
-**Search Contact:** Search for a specific contact by name.
+A lightweight yet powerful address book application written in C that simplifies contact management. This console-based application allows users to efficiently store, access, and modify contact information with an intuitive menu-driven interface.
 
-##Usage
-**1)Upon Running the Application:**
+## ✨ Features
+
+- **📝 Add Contact** - Create new entries with name and either phone number or email address
+- **🗑️ Delete Contact** - Remove unwanted contacts from your address book
+- **✏️ Update Contact** - Modify information for existing contacts
+- **👁️ View Contacts** - Display all stored contacts in an organized format
+- **🔍 Search Contact** - Find specific contacts by name
+
+## 🚀 Usage
+
+When you run the application, you'll be presented with a simple menu interface:
+
+```
 *** Address Book Menu ***
 1. Add Contact
 2. Delete Contact
@@ -19,29 +24,40 @@ This is a simple Address Book application written in C. It allows users to manag
 4. View Contacts
 5. Search Contact
 6. Exit
-Enter your choice:
+Enter your choice: 
+```
 
-**2)Enter the Option: Type the corresponding number to perform an action (e.g., 1 to add a contact).**
+Simply enter the number corresponding to the action you want to perform and follow the prompts.
 
-##Code Structure
-**Contact Structure**
-**The Contact structure holds the contact information:**
+## 🏗️ Code Structure
+
+### Contact Structure
+
+The application uses a custom structure to store contact information:
+
+```c
 struct Contact {
-    char name[NAME_LENGTH]; // Holds the name of the contact
+    char name[NAME_LENGTH];          // Stores contact name
     union {
-        char phone[PHONE_LENGTH]; // Union to hold phone number
-        char email[EMAIL_LENGTH]; // Union to hold email address
+        char phone[PHONE_LENGTH];    // Stores phone number
+        char email[EMAIL_LENGTH];    // Stores email address
     } contactInfo;
-    int isPhone; // Flag to indicate whether phone number is present (1) or email (0)
+    int isPhone;                     // Flag: 1 for phone, 0 for email
 };
+```
 
-**Main Function
-The main function handles the menu and user inputs:**
+### Main Function
+
+The main function manages the menu system and directs the program flow:
+
+```c
 int main() {
-    struct Contact addressBook[MAX_CONTACTS]; // Array to store contacts
-    int numContacts = 0; // Variable to track the number of contacts
-    int choice; // Variable to store user's menu choice
+    struct Contact addressBook[MAX_CONTACTS];  // Array of contacts
+    int numContacts = 0;                       // Contact counter
+    int choice;                               // User menu selection
+    
     do {
+        // Display menu options
         printf("\n*** Address Book Menu ***\n");
         printf("1. Add Contact\n");
         printf("2. Delete Contact\n");
@@ -51,6 +67,8 @@ int main() {
         printf("6. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
+        
+        // Process user choice
         switch (choice) {
             case 1:
                 addContact(addressBook, &numContacts);
@@ -74,6 +92,24 @@ int main() {
                 printf("Invalid choice. Please try again.\n");
         }
     } while (choice != 6);
+    
     return 0;
 }
+```
 
+## 📋 Requirements
+
+- C compiler (gcc recommended)
+- Standard C libraries
+
+## 🔧 Installation
+
+1. Clone this repository
+2. Compile the source code:
+   ```
+   gcc -o contact_manager main.c
+   ```
+3. Run the application:
+   ```
+   ./contact_manager
+   ```
